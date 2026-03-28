@@ -1,0 +1,923 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老胡谈股 | 20 年经验正义炒股指南</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #c0392b;
+            --bg-color: #f8f9fa;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --green-up: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+        }
+
+        /* 滚动动画基础类 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .slide-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .slide-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 导航栏 */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.5rem 0;
+            background-color: rgba(44, 62, 80, 0.98);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .logo::after {
+            content: '📈';
+            position: absolute;
+            top: -10px;
+            right: -25px;
+            font-size: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--green-up);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: var(--green-up);
+        }
+
+        /* Hero 区域 */
+        .hero {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+            padding: 80px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(39, 174, 96, 0.05) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 20px;
+            background-color: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-warning {
+            background-color: var(--accent-color);
+        }
+
+        .btn-warning:hover {
+            background-color: #a93226;
+        }
+
+        /* 内容板块 */
+        section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 15px auto 0;
+            transition: width 0.6s ease;
+        }
+
+        .section-title.visible::after {
+            width: 60px;
+        }
+
+        /* 基础知识卡片 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #eee;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card p {
+            flex-grow: 1;
+            color: #555;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            display: inline-block;
+            background-color: #ecf0f1;
+            color: var(--primary-color);
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card:hover .step-number {
+            background-color: var(--green-up);
+            color: white;
+            transform: rotate(360deg);
+        }
+
+        /* 风险警示区 */
+        .warning-section {
+            background-color: #fff5f5;
+            border-top: 1px solid #ffebeb;
+            border-bottom: 1px solid #ffebeb;
+            position: relative;
+        }
+
+        .warning-card {
+            border-top-color: var(--accent-color);
+        }
+
+        .warning-tag {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            animation: shake 3s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
+            20%, 40%, 60%, 80% { transform: rotate(5deg); }
+        }
+
+        /* 理念区 */
+        .philosophy {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy::before {
+            content: '💡';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: float 3s infinite;
+        }
+
+        .philosophy::after {
+            content: '🎯';
+            position: absolute;
+            bottom: 20px;
+            right: 50px;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: float 3s infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .philosophy .section-title {
+            color: white;
+        }
+
+        .philosophy .section-title::after {
+            background-color: white;
+        }
+
+        .philosophy p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* footer */
+        footer {
+            background-color: #1a252f;
+            color: #bdc3c7;
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        /* 统计数字动画 */
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--green-up);
+            display: inline-block;
+        }
+
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            border: none;
+            font-size: 1.5rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--green-up);
+            transform: translateY(-5px);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <header id="header">
+        <div class="container nav-wrapper">
+            <div class="logo">老胡谈股</div>
+            <nav>
+                <ul>
+                    <li><a href="#basics">入门指南</a></li>
+                    <li><a href="#warning">风险警示</a></li>
+                    <li><a href="#philosophy">正义理念</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <img src="logo.png" alt="股民老胡 Logo" class="profile-img fade-in">
+            <h1 class="fade-in">20 年股龄，只讲真话</h1>
+            <p class="fade-in">我是老胡。见过牛熊更替，经历过市场起伏。建站初衷不为荐股，只为普及常识，揭露骗局，倡导正义炒股。</p>
+            <div class="fade-in">
+                <button id="openTestBtn" class="btn btn-warning">投资者风险自测</button>
+            </div>
+            <div style="margin-top: 40px;" class="scale-in">
+                <p style="font-size: 0.9rem; color: #999;">已帮助 <span class="stat-number" data-target="10000">0</span>+ 投资者避坑</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 基础知识 -->
+    <section id="basics">
+        <div class="container">
+            <h2 class="section-title fade-in">炒股入门六步走</h2>
+            <div class="grid">
+                <div class="card slide-left">
+                    <span class="step-number">1</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="心态建设">
+                    <h3>心态建设</h3>
+                    <p>入市前先问自己：这是闲钱吗？能接受亏损吗？切记股市不是赌场，要用投资的心态而非赌博的心态入场。</p>
+                </div>
+                <div class="card slide-left">
+                    <span class="step-number">2</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="正规开户">
+                    <h3>正规开户</h3>
+                    <p>必须选择持有证监会牌照的正规证券公司。通过官方 APP 或线下营业部办理，切勿轻信"内部渠道"。</p>
+                </div>
+                <div class="card slide-left">
+                    <span class="step-number">3</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="银证绑定">
+                    <h3>银证绑定</h3>
+                    <p>建立第三方存管关系，绑定本人名下银行卡。资金只能在本人银行卡与证券账户之间划转，确保资金安全。</p>
+                </div>
+                <div class="card slide-right">
+                    <span class="step-number">4</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="模拟演练">
+                    <h3>模拟演练</h3>
+                    <p>先使用模拟盘熟悉交易规则（如 T+1、涨跌幅限制）。在不亏钱的情况下验证自己的交易逻辑。</p>
+                </div>
+                <div class="card slide-right">
+                    <span class="step-number">5</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="小额试水">
+                    <h3>小额试水</h3>
+                    <p>实盘初期建议轻仓操作。感受真实市场的波动对心理的影响，切勿一开始就满仓梭哈。</p>
+                </div>
+                <div class="card slide-right">
+                    <span class="step-number">6</span>
+                    <img src="https://bailian-bmp-pre.oss-cn-hangzhou.aliyuncs.com/public/system_agent/PlaceHolder.png" alt="纪律风控">
+                    <h3>纪律风控</h3>
+                    <p>建立自己的交易体系，设定止盈止损点。严格执行计划，克服贪婪与恐惧，这是生存的根本。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 风险警示 -->
+    <section id="warning" class="warning-section">
+        <div class="container">
+            <h2 class="section-title fade-in">警惕！新手六大常见骗局</h2>
+            <div class="grid">
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 荐股群杀猪盘</h3>
+                    <p>微信群里"老师"免费荐股，前期准后期错，诱导你去陌生平台接盘垃圾股，最终血本无归。</p>
+                </div>
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 非法配资陷阱</h3>
+                    <p>宣称提供 5 倍 10 倍杠杆，其实是虚拟盘。你的钱没进股市，直接进了骗子口袋，亏损也是他们说了算。</p>
+                </div>
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 假冒交易软件</h3>
+                    <p>仿冒正规券商 APP，界面一模一样。资金转入的是私人账户，无法提现，后台数据随意篡改。</p>
+                </div>
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 内幕消息收费</h3>
+                    <p>售卖所谓"庄家内幕"、"涨停代码"。真有内幕早就自己闷声发财了，何必赚你那点会员费？</p>
+                </div>
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 原始股发行骗局</h3>
+                    <p>宣称公司马上上市，兜售原始股。多数是空壳公司，上市遥遥无期，资金一旦投入无法退回。</p>
+                </div>
+                <div class="card warning-card scale-in">
+                    <span class="warning-tag">高危</span>
+                    <h3>❌ 保本收益承诺</h3>
+                    <p>任何承诺"稳赚不赔"、"保本高息"的都是违规诈骗。股市风险自负，不存在绝对保本。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 理念 -->
+    <section id="philosophy" class="philosophy">
+        <div class="container">
+            <h2 class="section-title fade-in">什么是正义炒股？</h2>
+            <p class="slide-left">正义炒股，不是不赚钱，而是赚认知的钱，赚企业成长的钱。</p>
+            <br>
+            <p class="slide-right">拒绝操纵，拒绝内幕，拒绝欺诈。我们倡导独立思考，理性投资，让资本市场回归资源配置的本质。</p>
+            <br>
+            <button id="contactBtn" class="btn fade-in" style="background: white; color: var(--primary-color);">加入交流社群</button>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2023 老胡谈股 版权所有</p>
+            <div class="disclaimer">
+                <p>免责声明：本网站内容仅代表个人观点，不构成任何投资建议。股市有风险，入市需谨慎。请勿相信任何私下承诺收益的行为。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="backToTop" class="back-to-top">↑</button>
+
+    <!-- 模态框：风险自测 -->
+    <div id="riskModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>投资者风险意识自测</h3>
+            <br>
+            <p style="text-align: left; margin-bottom: 20px;">
+                1. 是否有人承诺您"稳赚不赔"？<br>
+                2. 是否要求您转账到非证券账户？<br>
+                3. 是否让您下载非应用商店的 APP？
+            </p>
+            <p style="color: var(--accent-color); font-weight: bold;">如果有以上任一情况，请立即停止交易并报警！</p>
+            <br>
+            <button id="closeModalBtn" class="btn">我知道了</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取元素
+            const openTestBtn = document.getElementById('openTestBtn');
+            const contactBtn = document.getElementById('contactBtn');
+            const modal = document.getElementById('riskModal');
+            const closeBtn = document.querySelector('.close-btn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const navLinks = document.querySelectorAll('nav a');
+            const header = document.getElementById('header');
+            const backToTopBtn = document.getElementById('backToTop');
+            const statNumber = document.querySelector('.stat-number');
+            const sectionTitles = document.querySelectorAll('.section-title');
+            const animatedElements = document.querySelectorAll('.fade-in, .slide-left, .slide-right, .scale-in');
+
+            // 滚动动画 - 观察元素进入视口
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // 观察所有需要动画的元素
+            animatedElements.forEach(function(el) {
+                observer.observe(el);
+            });
+
+            // 观察标题
+            sectionTitles.forEach(function(title) {
+                observer.observe(title);
+            });
+
+            // 数字计数动画
+            function animateNumber(element, target) {
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(function() {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = target + '+';
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current) + '+';
+                    }
+                }, 30);
+            }
+
+            // 当统计数字进入视口时触发动画
+            const statObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                        entry.target.classList.add('animated');
+                        const target = parseInt(entry.target.getAttribute('data-target'));
+                        animateNumber(entry.target, target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            if (statNumber) {
+                statObserver.observe(statNumber);
+            }
+
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    header.classList.remove('scrolled');
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+
+            // 回到顶部
+            if (backToTopBtn) {
+                backToTopBtn.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // 打开模态框
+            if (openTestBtn) {
+                openTestBtn.addEventListener('click', function() {
+                    modal.style.display = 'flex';
+                    setTimeout(function() {
+                        modal.classList.add('show');
+                    }, 10);
+                });
+            }
+
+            // 关闭模态框 (叉号)
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    modal.classList.remove('show');
+                    setTimeout(function() {
+                        modal.style.display = 'none';
+                    }, 300);
+                });
+            }
+
+            // 关闭模态框 (按钮)
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', function() {
+                    modal.classList.remove('show');
+                    setTimeout(function() {
+                        modal.style.display = 'none';
+                    }, 300);
+                });
+            }
+
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                    setTimeout(function() {
+                        modal.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            // 联系按钮提示
+            if (contactBtn) {
+                contactBtn.addEventListener('click', function() {
+                    alert('老胡提示：真正的交流在于知识分享，任何收费群请谨慎加入！');
+                });
+            }
+
+            // 导航平滑滚动
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // 卡片悬停音效提示（可选）
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(function(card) {
+                card.addEventListener('mouseenter', function() {
+                    card.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
